@@ -6,28 +6,31 @@ const puppeteer = require('puppeteer');
 (async function () {
 
   try {
-    //先获取chrome路径
-    const ret = await axios.get('http://127.0.0.1:11170/api/getChromePath')
-    const chromePath = ret.data.data
-    const profileId = '201123205819682985';//loginBox环境ID
+    // 要启动的环境ID
+    const profileId = '210831162130358725';
+    const loginBoxServer = 'http://127.0.0.1:11170'
+
+    //获取启动环境信息
+    const startupOptionsResponse = await axios.get(loginBoxServer + '/api/getStartupOptions?profileId=' + profileId)
+    const startupOptions = startupOptionsResponse.data.data
+
+    const chromePath = startupOptions.chromeLocation
     //获取指定环境的配置信息
-    const profileRet = await axios.get('http://127.0.0.1:11170/api/profileInfo?profileId=' + profileId + '&getUserDir=1')
+    const profileResponse = await axios.get(loginBoxServer + '/api/profileInfo?profileId=' + profileId)
 
-    const profile = profileRet.data.data
+    const profile = profileResponse.data.data
 
-
+   
     let browser = await puppeteer.launch({
       headless: false,
       executablePath: chromePath,
+      ignoreDefaultArgs: true,
       ignoreHTTPSErrors: true,
       args: [
         '--login-box-id=' + profileId,
-        '--user-data-dir=' + profile.userDir,
+        '--user-data-dir=' + startupOptions.userDir,
       ],
-      defaultViewport: { // 设置分辨率
-        width: profile.model.screenWidth,
-        height: profile.model.screenHeight
-      }
+      defaultViewport: null
     });
 
 
