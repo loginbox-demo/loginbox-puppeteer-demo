@@ -7,7 +7,7 @@ const puppeteer = require('puppeteer');
 
   try {
     // 要启动的环境ID
-    const profileId = '210831162130358725';
+    const profileId = '210621234929253150';
     const loginBoxServer = 'http://127.0.0.1:11170'
 
     //获取启动环境信息
@@ -20,6 +20,9 @@ const puppeteer = require('puppeteer');
 
     const profile = profileResponse.data.data
 
+
+    //脚本启动如果要加载插件，需要指定插件路径
+    //const extDir = 'D:\\Project\\chrome-extension\\build'
    
     let browser = await puppeteer.launch({
       headless: false,
@@ -29,6 +32,8 @@ const puppeteer = require('puppeteer');
       args: [
         '--login-box-id=' + profileId,
         '--user-data-dir=' + startupOptions.userDir,
+        //`--disable-extensions-except=${extDir}`,//加载插件取消注释
+       // `--load-extension=${extDir}`//加载插件取消注释
       ],
       defaultViewport: null
     });
